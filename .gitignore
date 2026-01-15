@@ -1,0 +1,6 @@
+# Fichers et dossiers a ignorer
+build/
+logs/serial/
+.DS_Store
+*.bak
+*.tmp
