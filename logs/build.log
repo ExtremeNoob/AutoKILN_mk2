@@ -1,0 +1,4 @@
+[build] FQBN=rp2040:rp2040:rpipico2w
+[build] SKETCH=src/AutoKILN_Pico/AutoKILN_Pico.ino
+Sketch uses 312256 bytes (7%) of program storage space. Maximum is 4186112 bytes.
+Global variables use 70724 bytes (13%) of dynamic memory, leaving 453564 bytes for local variables. Maximum is 524288 bytes.
