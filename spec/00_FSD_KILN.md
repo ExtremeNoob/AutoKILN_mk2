@@ -1,9 +1,13 @@
 # Kiln Controller — Functional Specification Document (FSD)
-Version: 0.1 (mk2 starter)  
+Version: 0.2 (mk2 starter, updated with pinmap reference)  
 Date: 2026-01-15
 
 This document defines **what the system must do**.  
 Implementation details live in code; requirements live here.
+
+**Related docs**
+- Pin map: `docs/pinmap.md` (single source of truth for GPIO assignments)
+- Protocol: `spec/01_PROTOCOL.md`
 
 ---
 
@@ -37,25 +41,18 @@ MVP = a controllable loop that is safe, testable, and logged:
 
 ---
 
-## 3. System overview
-- Controller MCU: Pico 2W
-- Sensors: SHT31 temp/RH
-- Output: SSR control pin (heater ON/OFF)
-- Interface: Serial (USB) command + status
+## 3. Hardware interface (mk2 MVP)
 
-### 3.1 Hardware interface
+### 3.1 Pin map source of truth
+All GPIO assignments and electrical conventions (polarity, pulls, boot-safe states) shall be documented in:
+- `docs/pinmap.md`
 
-#### Pin map (Pico 2W)
+The FSD references **signal names** rather than pin numbers. Example:
+- Heater SSR control output = `SSR_CTRL` (see `docs/pinmap.md`)
 
-- SSR control output: GPIO __ (active: HIGH/LOW = __ )
-- <!--(Optional) Status LED: GPIO __-->
-- <!--(Optional) Door switch: GPIO __ (pull-up/down: __)-->
-- <!--(Optional) Scale: GPIO __ (pull-up/down: __)-->
-- <!--(Optional) UART_PINS: GPIO __ (pull-up/down: __)-->
-
-#### Electrical / safety notes
-- SSR output shall default OFF on boot (FR-001).
-- SSR output polarity shall be defined (active-high vs active-low).
+### 3.2 Electrical / safety notes
+- Heater control hardware shall be designed such that **heater OFF is the default** and is enforceable in firmware (FR-001 / FR-003).
+- If the SSR module is **active-low**, the `SSR_CTRL` polarity must be set accordingly in both `docs/pinmap.md` and code.
 
 ---
 
@@ -79,9 +76,9 @@ MVP = a controllable loop that is safe, testable, and logged:
 ## 5. Functional requirements (FR)
 
 ### 5.1 Safety
-- **FR-001** On boot, SSR output shall be set **OFF** before any other actions.
-- **FR-002** In IDLE, SSR output shall remain **OFF**.
-- **FR-003** In FAULT, SSR output shall be forced **OFF** immediately and remain OFF.
+- **FR-001** On boot, `SSR_CTRL` shall be set **OFF** before any other actions (see `docs/pinmap.md` for polarity).
+- **FR-002** In IDLE, `SSR_CTRL` shall remain **OFF**.
+- **FR-003** In FAULT, `SSR_CTRL` shall be forced **OFF** immediately and remain OFF.
 
 ### 5.2 Telemetry / logging
 - **FR-010** The system shall print a boot banner with firmware version.
@@ -114,7 +111,7 @@ MVP = a controllable loop that is safe, testable, and logged:
 
 ---
 
-## 6. Fault table
+## 6. Fault table (mk2 MVP)
 | Code | Name         | Severity  | Latched | Action |
 |------|--------------|-----------|---------|--------|
 | F001 | SENSOR_FAIL  | CRITICAL  | Yes     | Heater OFF, FAULT |
@@ -122,7 +119,7 @@ MVP = a controllable loop that is safe, testable, and logged:
 
 ---
 
-## 7. Configuration defaults
+## 7. Configuration defaults (mk2 MVP)
 - `BAUD`: 115200
 - `LOG_PERIOD_S`: 10
 - `SENSOR_PERIOD_MS`: 1000
@@ -130,3 +127,11 @@ MVP = a controllable loop that is safe, testable, and logged:
 - `MAX_TEMP_C`: 80.0
 - `OVER_TEMP_S`: 5
 - `SENSOR_FAIL_COUNT`: 5
+
+---
+
+## 8. Open decisions (later)
+- FRAM checkpoint + RTC outage recovery
+- Current sensor SSR-stuck detection (ACS758)
+- Protocol for ESP32 HMI (RS-485 / UART): see `spec/01_PROTOCOL.md`
+- Recipe/stage model
