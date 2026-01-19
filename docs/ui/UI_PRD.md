@@ -1,0 +1,5 @@
+- Target: ESP32-S3, 800×480, touch, performance budget (FPS target, max RAM/flash you’re willing to spend on images)
+- UI toolchain: EEZ Studio (LVGL 9) + asset pipeline (PNGs)
+- Navigation model: 4 screens (your current set): **Dashboard / Program / Manual / Diagnostics**
+- Input devices: touch only (no encoder), optional audio cues
+- Safety constraints: what must remain usable under faults (overtemp, sensor missing, comms lost)

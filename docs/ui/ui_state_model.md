@@ -1,0 +1,4 @@
+- **Inputs to UI** (telemetry & state): temps, RH, setpoints, heater duty, current sensor, door, faults, program step, ETA, comm status, etc.
+- **Outputs from UI** (commands): start/stop program, change setpoint, manual heater %, acknowledge alarm, run fan purge, tare scale, etc.
+- Update rates: what needs 10 Hz vs 1 Hz
+- Ownership: what is calculated on Pico vs ESP32
